@@ -12,3 +12,5 @@ for exercise in exercises:
 
 for exercise, person in assignments.items():
     print(f"{exercise} is assigned to {person}")
+    
+input("Press Enter to exit...")
