@@ -1,7 +1,7 @@
 import random
 
-people = ["Juan", "Jiah", "Julia", "Phillip", "Neeha"]
-exercises = ["E4", "E5", "E6", "E7", "E8"]
+people = ["Juan", "Jiah", "Julia"]
+exercises = ["E1", "E2", "E3", "E4", "E5", "E6", "E7"]
 
 assignments = {}
 
