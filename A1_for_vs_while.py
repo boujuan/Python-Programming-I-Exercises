@@ -22,7 +22,6 @@ increment = 1  # m
 
 def method_for(k, beta, D, ct, threshold, increment):
     start_time = time.time()
-    # Calculate wind speed up to a certain distance behind the turbine when wind speed is below threshold
     for x in range(0, int(1e5), increment):
         sigma_value = sigma(k, x, beta, D)
         u = wind_speed(uniform_wind_speed, ct, D, sigma_value)
@@ -35,26 +34,39 @@ def method_for(k, beta, D, ct, threshold, increment):
 def method_while(k, beta, D, ct, threshold, increment):
     start_time = time.time()
     x = 0
-    while x < int(1e5):
-        sigma_value = sigma(k, x, beta, D)
-        u = wind_speed(uniform_wind_speed, ct, D, sigma_value)
-        
-        if u >= threshold:
+    while x < 100000:        
+        if wind_speed(uniform_wind_speed, ct, D, sigma(k, x, beta, D)) >= threshold:
             break
         x += increment
     end_time = time.time()
     return end_time - start_time
 
-def method_pythonic(k, beta, D, ct, threshold, increment):
+def method_generator(k, beta, D, ct, threshold, increment):
     start_time = time.time()
-    x = next((x for x in range(0, int(1e5), increment) if wind_speed(uniform_wind_speed, ct, D, sigma(k, x, beta, D)) >= threshold), None)    
+    x = next((x for x in range(0, 100000, increment) if wind_speed(uniform_wind_speed, ct, D, sigma(k, x, beta, D)) >= threshold), None)    
     end_time = time.time()
     return end_time - start_time
 
-number_times = 1000
-method_1_times = [method_for(k, beta, D, ct, threshold, increment)  for i in range(number_times)]
+def method_map(k, beta, D, ct, threshold, increment):
+    start_time = time.time()
+    x_values = range(0, 100000, increment)
+    u_values = list(map(lambda x: wind_speed(uniform_wind_speed, ct, D, sigma(k, x, beta, D)), x_values))
+    x = next((x for x, u in zip(x_values, u_values) if u >= threshold), None)
+    end_time = time.time()
+    return end_time - start_time
+
+def method_for_optim(k, beta, D, ct, threshold, increment):
+    start_time = time.time()
+    for x in range(0, 100000, increment):
+        if wind_speed(uniform_wind_speed, ct, D, sigma(k, x, beta, D)) >= threshold:
+            break
+    end_time = time.time()
+    return end_time - start_time
+
+number_times = 100
+method_1_times = [method_for_optim(k, beta, D, ct, threshold, increment)  for i in range(number_times)]
 method_2_times = [method_while(k, beta, D, ct, threshold, increment)  for i in range(number_times)]
-method_3_times = [method_pythonic(k, beta, D, ct, threshold, increment)  for i in range(number_times)]
+method_3_times = [method_generator(k, beta, D, ct, threshold, increment)  for i in range(number_times)]
 
 print('Method 1: ', sum(method_1_times)/len(method_1_times))
 print('Method 2: ', sum(method_2_times)/len(method_2_times))
