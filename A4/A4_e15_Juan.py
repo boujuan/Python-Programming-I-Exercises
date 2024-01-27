@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-data = np.genfromtxt('A4/results_farm.csv.gz', delimiter=',', skip_header=1)
+data = np.genfromtxt('results_farm.csv.gz', delimiter=',', skip_header=1)
 
 states = np.unique(data[:, 0])
 turbines = np.unique(data[:, 1])
